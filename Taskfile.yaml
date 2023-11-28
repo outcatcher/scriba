@@ -1,0 +1,10 @@
+version: '3'
+
+dotenv:
+  - .env
+
+tasks:
+  ling:
+    cmd: golangci-lint run ./...
+  run:
+    cmd: go run ./cmd/main.go

@@ -1,0 +1,16 @@
+storage:
+  type: in-memory # in-memory / db
+  db:
+    server: localhost
+    port: 55631
+    user: postgres
+    password: postgres
+
+bot:
+  method: poll # poll / webhook
+  poll:
+    interval: 3s
+  webhook:
+  messages:
+    lifetime:
+  verbose: yes
