@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/outcatcher/scriba/internal/core/config"
 	"gopkg.in/telebot.v3"
-	"scriba/internal/config"
 )
 
 type botState struct {

@@ -12,6 +12,11 @@ import (
 )
 
 type PostgresConfig struct {
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Database string `yaml:"database"`
+	Username string `yaml:"user"`
+	Password string `env:"POSTGRES_PASSWORD"`
 }
 
 type PollConfig struct {
@@ -22,21 +27,14 @@ type MessagesConfig struct {
 	Lifetime time.Duration `yaml:"lifetime"`
 }
 
-type StorageType string
-
-const (
-	StorageTypeInMemory = "in-memory"
-)
-
 type StorageConfig struct {
-	Type StorageType `yaml:"type"`
+	Postgres PostgresConfig `yaml:"postgres"`
 }
 
 type BotMethod string
 
 type BotConfig struct {
 	Token    string          `env:"BOT_TOKEN"`
-	Storage  StorageConfig   `yaml:"storage"`
 	Method   BotMethod       `yaml:"method"`
 	Messages *MessagesConfig `yaml:"messages"`
 	Poll     *PollConfig     `yaml:"poll,omitempty"`
@@ -44,11 +42,11 @@ type BotConfig struct {
 }
 
 type Configuration struct {
-	Postgres PostgresConfig `yaml:"postgres"`
-	Bot      BotConfig      `yaml:"bot"`
+	Storage StorageConfig `yaml:"storage"`
+	Bot     BotConfig     `yaml:"bot"`
 }
 
-// LoadConfig loads server configuration.
+// LoadConfig loads usecases configuration.
 func LoadConfig(configPath string, useEnv bool) (*Configuration, error) {
 	file, err := os.Open(filepath.Clean(configPath))
 	if err != nil {
@@ -68,6 +66,10 @@ func LoadConfig(configPath string, useEnv bool) (*Configuration, error) {
 
 	if err := decoder.Decode(config); err != nil {
 		return nil, fmt.Errorf("error loading config: error decoding yaml: %w", err)
+	}
+
+	if !useEnv {
+		return config, nil
 	}
 
 	if err := env.Parse(config); err != nil {

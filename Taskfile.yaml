@@ -7,4 +7,4 @@ tasks:
   ling:
     cmd: golangci-lint run ./...
   run:
-    cmd: go run ./cmd/main.go
+    cmd: docker compose up --build -d

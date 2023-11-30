@@ -9,9 +9,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"scriba/internal/bot"
-	"scriba/internal/config"
-	"scriba/internal/server"
+	"github.com/outcatcher/scriba/internal/bot"
+	"github.com/outcatcher/scriba/internal/core/config"
 )
 
 var configPath = flag.String("config", "./config/config.yaml", "Configuration file to be used")
@@ -25,10 +24,6 @@ func main() {
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-
-	if err := server.Start(); err != nil {
-		log.Fatalln("failed to start server", err)
-	}
 
 	if err := bot.Start(ctx, cfg.Bot); err != nil {
 		log.Fatalln("failed to start bot", err)

@@ -1,8 +1,8 @@
 package bot
 
 import (
+	"github.com/outcatcher/scriba/internal/core/config"
 	"gopkg.in/telebot.v3"
-	"scriba/internal/config"
 )
 
 func autodelete(cfg config.BotConfig) telebot.MiddlewareFunc {
