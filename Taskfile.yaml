@@ -4,7 +4,11 @@ dotenv:
   - .env
 
 tasks:
-  ling:
+  lint:
     cmd: golangci-lint run ./...
+  build-win:
+    cmd: go build -trimpath -o bot.exe ./cmd/bot/main.go
+  build:
+    cmd: go build -trimpath -o bot ./cmd/bot/main.go
   run:
     cmd: docker compose up --build -d

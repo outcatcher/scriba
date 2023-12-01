@@ -34,14 +34,20 @@ func (r *Repo) CreateUserFromTG(ctx context.Context, user *User) (uuid.UUID, err
 	return createdID, nil
 }
 
-// GetUserCountByTGID returns user count by Telegram ID.
-func (r *Repo) GetUserCountByTGID(ctx context.Context, telegramID int64) (int32, error) {
-	var count int32
-
-	err := r.db.GetContext(ctx, &count, `SELECT current_count FROM users WHERE tg_user_id = $1;`, telegramID)
-	if err != nil {
-		return 0, fmt.Errorf("error selecting current count from users: %w", err)
+// FindUserByTelegramID search for user by telegram ID.
+func (r *Repo) FindUserByTelegramID(ctx context.Context, telegramID int64) (*User, error) {
+	if value, ok := r.usersCacheByTGID.Get(telegramID); ok {
+		return value, nil
 	}
 
-	return count, err
+	result := new(User)
+
+	err := r.db.GetContext(ctx, &result, `SELECT * FROM users WHERE tg_user_id = $1;`, telegramID)
+	if err != nil {
+		return nil, fmt.Errorf("error selecting current by Telegram ID: %w", err)
+	}
+
+	r.usersCacheByTGID.Set(result.TGUserID, result)
+
+	return result, nil
 }
