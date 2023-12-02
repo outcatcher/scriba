@@ -13,7 +13,7 @@ import (
 
 type PostgresConfig struct {
 	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
+	Port     int    `yaml:"port"`
 	Database string `yaml:"database"`
 	Username string `yaml:"user"`
 	Password string `env:"POSTGRES_PASSWORD"`

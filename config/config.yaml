@@ -1,6 +1,6 @@
 storage:
   postgres:
-    host: localhost
+    host: scriba-postgres
     port: 55631
     database: postgres
     user: postgres
