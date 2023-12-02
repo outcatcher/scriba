@@ -1,5 +1,4 @@
 -- +goose Up
-
 CREATE TABLE players
 (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -15,6 +14,5 @@ CREATE TABLE count_history
 );
 
 -- +goose Down
-
 DROP TABLE count_history;
 DROP TABLE players;
