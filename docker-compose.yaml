@@ -33,3 +33,18 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  scriba:
+    container_name: scriba
+    restart: always
+    build:
+      context: .
+      dockerfile: app.Dockerfile
+    environment:
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      BOT_TOKEN: ${BOT_TOKEN}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+

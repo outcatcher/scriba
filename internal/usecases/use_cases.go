@@ -1,22 +1,24 @@
 package usecases
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/outcatcher/scriba/internal/core/config"
-	"github.com/outcatcher/scriba/internal/core/storage"
+	"github.com/google/uuid"
 	"github.com/outcatcher/scriba/internal/repo"
 )
 
-type UseCases struct {
-	repo *repo.Repo
+type repository interface {
+	GetPlayerCount(ctx context.Context, id uuid.UUID) (int32, error)
+	UpdatePlayerCount(ctx context.Context, playerID uuid.UUID, delta int16) error
+	CreateUserFromTG(ctx context.Context, telegramID int64) (uuid.UUID, error)
+	FindUserByTelegramID(ctx context.Context, telegramID int64) (*repo.Player, error)
 }
 
-func New(cfg config.Configuration) (*UseCases, error) {
-	db, err := storage.Connect(cfg.Storage.Postgres)
-	if err != nil {
-		return nil, fmt.Errorf("error creating use cases: %w", err)
-	}
+type UseCases struct {
+	repo repository
+}
 
-	return &UseCases{repo: repo.New(db)}, nil
+// WithRepo make use cases to use given repository.
+func (u *UseCases) WithRepo(repo repository) {
+	u.repo = repo
 }

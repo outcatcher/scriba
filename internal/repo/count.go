@@ -13,22 +13,28 @@ type Count struct {
 	PlayerID uuid.UUID `db:"player_id"`
 }
 
-// UpdateCount updates user point count.
-func (r *Repo) UpdateCount(ctx context.Context, count Count) error {
-	_, err := r.db.NamedExecContext(
+// UpdatePlayerCount updates player point count.
+func (r *Repo) UpdatePlayerCount(ctx context.Context, playerID uuid.UUID, delta int16) error {
+	_, err := r.db.ExecContext(
 		ctx,
-		`INSERT INTO count_history (delta, player_id) VALUES (:delta, :player_id);`,
-		count,
+		`INSERT INTO count_history (delta, player_id) VALUES ($1, $2);`,
+		delta, playerID,
 	)
 	if err != nil {
 		return fmt.Errorf("error inserting into count_history: %w", err)
 	}
 
+	r.countSumCache.Delete(playerID)
+
 	return nil
 }
 
-// GetUserCount returns user count.
-func (r *Repo) GetUserCount(ctx context.Context, id uuid.UUID) (int32, error) {
+// GetPlayerCount returns player count.
+func (r *Repo) GetPlayerCount(ctx context.Context, id uuid.UUID) (int32, error) {
+	if sum, ok := r.countSumCache.Get(id); ok {
+		return sum, nil
+	}
+
 	var count int32
 
 	err := r.db.GetContext(
@@ -36,12 +42,14 @@ func (r *Repo) GetUserCount(ctx context.Context, id uuid.UUID) (int32, error) {
 		&count,
 		`SELECT SUM(delta)
 		FROM count_history
-		WHERE user_id = $1;`,
+		WHERE player_id = $1;`,
 		id,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("error selecting current count from users: %w", err)
 	}
 
-	return count, err
+	r.countSumCache.Set(id, count)
+
+	return count, nil
 }

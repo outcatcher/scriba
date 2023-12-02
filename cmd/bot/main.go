@@ -25,7 +25,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	if err := bot.Start(ctx, cfg.Bot); err != nil {
+	if err := bot.Start(ctx, cfg); err != nil {
 		log.Fatalln("failed to start bot", err)
 	}
 

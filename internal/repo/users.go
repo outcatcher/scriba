@@ -7,27 +7,23 @@ import (
 	"github.com/google/uuid"
 )
 
-// User describes structure of users table.
-type User struct {
-	ID           uuid.UUID `db:"id"`
-	Username     string    `db:"username"`
-	TGUserID     int64     `db:"tg_user_id"`
-	CurrentCount int32     `db:"current_count"`
+// Player describes structure of users table.
+type Player struct {
+	ID       uuid.UUID `db:"id"`
+	TGUserID int64     `db:"tg_user_id"`
 }
 
 // CreateUserFromTG creates new user from Telegram and returning its id.
-func (r *Repo) CreateUserFromTG(ctx context.Context, user *User) (uuid.UUID, error) {
+func (r *Repo) CreateUserFromTG(ctx context.Context, telegramUserID int64) (uuid.UUID, error) {
 	var createdID uuid.UUID
 
-	query, args, err := r.db.BindNamed(
-		`INSERT INTO users (username, tg_user_id) VALUES (:username, :tg_user_id) RETURNING id;`,
-		user,
-	)
+	err := r.db.GetContext(
+		ctx,
+		&createdID,
+		`INSERT INTO players (tg_user_id)
+		VALUES ($1)
+		RETURNING id;`, telegramUserID)
 	if err != nil {
-		return createdID, fmt.Errorf("error binding query args: %w", err)
-	}
-
-	if err := r.db.GetContext(ctx, &createdID, query, args); err != nil {
 		return createdID, fmt.Errorf("error inserting user: %w", err)
 	}
 
@@ -35,16 +31,16 @@ func (r *Repo) CreateUserFromTG(ctx context.Context, user *User) (uuid.UUID, err
 }
 
 // FindUserByTelegramID search for user by telegram ID.
-func (r *Repo) FindUserByTelegramID(ctx context.Context, telegramID int64) (*User, error) {
+func (r *Repo) FindUserByTelegramID(ctx context.Context, telegramID int64) (*Player, error) {
 	if value, ok := r.usersCacheByTGID.Get(telegramID); ok {
 		return value, nil
 	}
 
-	result := new(User)
+	result := new(Player)
 
-	err := r.db.GetContext(ctx, &result, `SELECT * FROM users WHERE tg_user_id = $1;`, telegramID)
+	err := r.db.GetContext(ctx, result, `SELECT * FROM players WHERE tg_user_id = $1;`, telegramID)
 	if err != nil {
-		return nil, fmt.Errorf("error selecting current by Telegram ID: %w", err)
+		return nil, fmt.Errorf("error selecting player by Telegram ID: %w", err)
 	}
 
 	r.usersCacheByTGID.Set(result.TGUserID, result)

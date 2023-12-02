@@ -8,19 +8,15 @@ import (
 	"gopkg.in/telebot.v3"
 )
 
-type botState struct {
-	cfg config.BotConfig
-}
-
 // Start starts the bot.
-func Start(ctx context.Context, cfg config.BotConfig) error {
+func Start(ctx context.Context, cfg *config.Configuration) error {
 	settings := telebot.Settings{
-		Token: cfg.Token,
+		Token: cfg.Bot.Token,
 		Poller: &telebot.LongPoller{
-			Timeout:        cfg.Poll.Interval,
+			Timeout:        cfg.Bot.Poll.Interval,
 			AllowedUpdates: []string{telebot.OnText}, // обрабатываем только сообщения
 		},
-		Verbose:   cfg.Verbose,
+		Verbose:   cfg.Bot.Verbose,
 		ParseMode: telebot.ModeMarkdownV2,
 	}
 
@@ -29,17 +25,22 @@ func Start(ctx context.Context, cfg config.BotConfig) error {
 		return fmt.Errorf("error creating new bot: %w", err)
 	}
 
-	bot.Use(autodelete(cfg))
+	bot.Use(autodelete(cfg.Bot))
 
-	registerStartMenu(bot)
+	hdl, err := newHandlers(cfg)
+	if err != nil {
+		if err != nil {
+			return fmt.Errorf("error creating new bot: %w", err)
+		}
+	}
+
+	hdl.registerHandlers(bot)
 
 	go bot.Start()
 
 	go func() {
-		select {
-		case <-ctx.Done():
-			bot.Stop()
-		}
+		<-ctx.Done()
+		bot.Stop()
 	}()
 
 	return nil

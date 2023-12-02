@@ -11,4 +11,4 @@ tasks:
   build:
     cmd: go build -trimpath -o bot ./cmd/bot/main.go
   run:
-    cmd: docker compose up --build -d
+    cmd: docker compose up -d --build --wait

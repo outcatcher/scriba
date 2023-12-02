@@ -2,8 +2,7 @@
 CREATE TABLE players
 (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    username   VARCHAR NOT NULL,
-    tg_user_id INT8    NOT NULL UNIQUE
+    tg_user_id INT8 NOT NULL UNIQUE
 );
 
 CREATE TABLE count_history
