@@ -1,0 +1,14 @@
+version: '3'
+
+dotenv:
+  - .env
+
+tasks:
+  lint:
+    cmd: golangci-lint run ./...
+  build-win:
+    cmd: go build -trimpath -o bot.exe ./cmd/bot/main.go
+  build:
+    cmd: go build -trimpath -o bot ./cmd/bot/main.go
+  run:
+    cmd: docker compose up -d --build --wait

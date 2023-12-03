@@ -1,2 +1,2 @@
 # scriba
-Pointer counter for a child
+Pointer counter telegram bot for a child
