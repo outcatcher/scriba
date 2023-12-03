@@ -167,7 +167,13 @@ func (h *handlers) handleStat(c telebot.Context) error {
 		return nil
 	}
 
-	err = c.Reply(fmt.Sprintf("Количество баллов у %s: %d", replyTo.Sender.FirstName, count))
+	countStr := strconv.FormatInt(int64(count), 10)
+
+	if count < 0 {
+		countStr = "\\" + countStr // escape -
+	}
+
+	err = c.Reply(fmt.Sprintf("Количество баллов у игрока %s: %s", replyTo.Sender.FirstName, countStr))
 	if err != nil {
 		return fmt.Errorf("failed to reply handleStat: %w", err)
 	}
