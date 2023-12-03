@@ -34,7 +34,7 @@ func Start(ctx context.Context, cfg *config.Configuration) error {
 		}
 	}
 
-	hdl.registerHandlers(bot)
+	hdl.registerHandlers(bot) //nolint:contextcheck
 
 	go bot.Start()
 

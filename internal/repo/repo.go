@@ -11,6 +11,7 @@ const (
 	cacheCapacity   = 10
 )
 
+// Repo - db communications.
 type Repo struct {
 	db *sqlx.DB
 
@@ -18,6 +19,7 @@ type Repo struct {
 	countSumCache    *otter.Cache[uuid.UUID, int32]
 }
 
+// New creates new DB instance with initialized caches.
 func New(db *sqlx.DB) *Repo {
 	usersCacheByTGID, err := otter.MustBuilder[int64, *Player](cacheCapacity).ShardCount(cacheShardCount).Build()
 	if err != nil {

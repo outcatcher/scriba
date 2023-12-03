@@ -3,7 +3,7 @@ storage:
     host: scriba-postgres
     port: 55631
     database: postgres
-    user: postgres
+    username: postgres
     password: postgres
 
 bot:

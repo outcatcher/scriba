@@ -48,7 +48,7 @@ func (h *handlers) registerHandlers(bot *telebot.Bot) {
 	bot.Handle("/stat", h.handleStat)
 }
 
-func (h *handlers) handleStart(c telebot.Context) error {
+func (*handlers) handleStart(c telebot.Context) error {
 	response := &telebot.ReplyMarkup{}
 
 	response.Inline(startMenu.Row(startMenuChildBtn))
@@ -83,16 +83,18 @@ func (h *handlers) handleStartReply(c telebot.Context) error {
 	return nil
 }
 
-func (h *handlers) handleCountChange(direction string) telebot.HandlerFunc {
-	var multiplier int16
-
+func directionMultiplier(direction string) int16 {
 	switch direction {
 	case directionUp:
-		multiplier = 1
+		return 1
 	case directionDown:
-		multiplier = -1
+		return -1
+	default:
+		return 0
 	}
+}
 
+func (h *handlers) handleCountChange(direction string) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
 		replyTo := c.Message().ReplyTo
 		if replyTo == nil {
@@ -128,7 +130,9 @@ func (h *handlers) handleCountChange(direction string) telebot.HandlerFunc {
 			return nil
 		}
 
-		err = h.app.UpdateCountByTelegramID(context.Background(), recipientID, multiplier*int16(delta))
+		err = h.app.UpdateCountByTelegramID(
+			context.Background(), recipientID, directionMultiplier(direction)*int16(delta),
+		)
 		if err != nil {
 			slog.Error("error handling count change", "error", err)
 

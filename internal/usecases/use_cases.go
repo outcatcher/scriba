@@ -14,6 +14,7 @@ type repository interface {
 	FindUserByTelegramID(ctx context.Context, telegramID int64) (*repo.Player, error)
 }
 
+// UseCases holds main app logic.
 type UseCases struct {
 	repo repository
 }

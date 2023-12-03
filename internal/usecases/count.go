@@ -20,6 +20,7 @@ func (u *UseCases) UpdateCountByTelegramID(ctx context.Context, telegramID int64
 	return nil
 }
 
+// GetPlayerCountByTelegramID returns total count of player by TG ID.
 func (u *UseCases) GetPlayerCountByTelegramID(ctx context.Context, telegramID int64) (int32, error) {
 	user, err := u.repo.FindUserByTelegramID(ctx, telegramID)
 	if err != nil {
