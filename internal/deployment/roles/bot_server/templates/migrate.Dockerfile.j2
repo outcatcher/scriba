@@ -1,0 +1,9 @@
+FROM alpine:3.17.2
+
+WORKDIR {{ docker_run_dir }}
+
+RUN apk add gcompat
+
+COPY ./migrate ./migrate
+
+ENTRYPOINT ["./migrate", "-config", "./config.yaml", "-migrations", "./migrations"]

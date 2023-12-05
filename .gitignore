@@ -1,7 +1,5 @@
-# Test binary, built with `go test -c`
-*.test
-
 .env
-.idea
+.vault_pass.txt
 
-build
+.idea/
+build/

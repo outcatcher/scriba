@@ -12,7 +12,10 @@ import (
 	"github.com/outcatcher/scriba/internal/core/storage"
 )
 
-var configPath = flag.String("config", "./config/config.yaml", "Configuration file to be used")
+var (
+	configPath     = flag.String("config", "./config/config.yaml", "Configuration file to be used")
+	migrationsPath = flag.String("migrations", "./internal/migrations", "Path to migrations")
+)
 
 func main() {
 	flag.Parse()
@@ -24,7 +27,7 @@ func main() {
 
 	ctx := context.Background()
 
-	if err := storage.ApplyMigrations(ctx, cfg.Storage.Postgres); err != nil {
+	if err := storage.ApplyMigrations(ctx, cfg.Storage.Postgres, *migrationsPath); err != nil {
 		log.Fatal(err)
 	}
 }

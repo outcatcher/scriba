@@ -68,6 +68,8 @@ func (h *handlers) handleStartReply(c telebot.Context) error {
 
 	err := h.app.RegisterWithTelegram(context.Background(), sender.ID)
 	if err != nil {
+		slog.Error("failed to register user: %w", "error", err)
+
 		err := c.Reply("Не смогли зарегистрировать пользователя :\\(")
 		if err != nil {
 			return fmt.Errorf("failed to register user reply error: %w", err)

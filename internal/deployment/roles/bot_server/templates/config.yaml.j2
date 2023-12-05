@@ -1,0 +1,16 @@
+storage:
+  postgres:
+    host: scriba-postgres
+    port: {{ postgres_port }}
+    database: postgres
+    username: postgres
+    password: postgres
+
+bot:
+  method: poll # poll / webhook
+  poll:
+    interval: 3s
+  webhook:
+  messages:
+    lifetime:
+  verbose: no
