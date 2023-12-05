@@ -9,10 +9,8 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
-const migrationsDir = "./internal/migrations"
-
 // ApplyMigrations applies all available migrations.
-func ApplyMigrations(ctx context.Context, cfg config.PostgresConfig) error {
+func ApplyMigrations(ctx context.Context, cfg config.PostgresConfig, migrationsDir string) error {
 	if err := goose.SetDialect(dbDriver); err != nil {
 		return fmt.Errorf("error selecting dialect for migrations: %w", err)
 	}

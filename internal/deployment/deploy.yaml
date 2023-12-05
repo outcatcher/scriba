@@ -1,0 +1,5 @@
+---
+- name: Deploy
+  hosts: target
+  roles:
+    - bot_server

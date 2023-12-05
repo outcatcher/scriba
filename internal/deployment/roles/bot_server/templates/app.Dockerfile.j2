@@ -1,0 +1,9 @@
+FROM alpine:3.17.2
+
+WORKDIR {{ docker_run_dir }}
+
+RUN apk add gcompat  # either add it or build binary with alpine docker image
+
+COPY ./scriba ./scriba
+
+ENTRYPOINT ["./scriba", "-config", "./config.yaml"]

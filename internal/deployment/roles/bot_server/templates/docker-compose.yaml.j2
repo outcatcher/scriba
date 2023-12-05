@@ -1,0 +1,55 @@
+services:
+
+  postgres:
+    container_name: scriba-postgres
+    hostname: postgres
+    restart: always
+    image: postgres:15.2-alpine3.17
+    volumes:
+      - "/opt/postgres_storage:/var/lib/postgresql/data"
+    ports:
+      - "{{ postgres_port }}:{{ postgres_port }}"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      POSTGRES_PORT: "{{ postgres_port }}"
+    command: "-p {{ postgres_port }}"
+    healthcheck:
+      test: "nc postgres {{ postgres_port }} -zv || exit 1"
+      retries: 3
+      interval: 5s
+      start_period: 5s
+
+  migrate:
+    container_name: migrate
+    restart: "no"
+    build:
+      context: .
+      dockerfile: migrate.Dockerfile
+    volumes:
+      - "{{ deploy_dir }}/config.yaml:{{ docker_run_dir }}/config.yaml:ro"
+      - "{{ deploy_dir }}/migrations:{{ docker_run_dir }}/migrations:ro"
+    environment:
+      POSTGRES_PORT: {{ postgres_port }}
+      POSTGRES_PASSWORD: {{ postgres_password }}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  scriba:
+    container_name: scriba
+    restart: always
+    build:
+      context: .
+      dockerfile: app.Dockerfile
+    volumes:
+      - "{{ deploy_dir }}/config.yaml:{{ docker_run_dir }}/config.yaml"
+    environment:
+      POSTGRES_PORT: {{ postgres_port }}
+      POSTGRES_PASSWORD: {{ postgres_password }}
+      BOT_TOKEN: {{ bot_token }}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
