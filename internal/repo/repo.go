@@ -15,6 +15,7 @@ const (
 type Repo struct {
 	db *sqlx.DB
 
+	usersCache       []Player
 	usersCacheByTGID *otter.Cache[int64, *Player]
 	countSumCache    *otter.Cache[uuid.UUID, int32]
 }

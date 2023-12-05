@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
+	"time"
 
 	"github.com/outcatcher/scriba/internal/core/config"
 	"github.com/outcatcher/scriba/internal/usecases"
@@ -16,6 +17,8 @@ const (
 
 	directionUp   = "up"
 	directionDown = "down"
+
+	deleteTimeout = time.Minute
 )
 
 var (
@@ -41,6 +44,8 @@ func newHandlers(cfg *config.Configuration) (*handlers, error) {
 func (h *handlers) registerHandlers(bot *telebot.Bot) {
 	bot.Handle("/start", h.handleStart)
 	bot.Handle(&startMenuChildBtn, h.handleStartReply)
+
+	bot.Handle("/menu", h.handleMenu)
 
 	bot.Handle("/up", h.handleCountChange(directionUp))
 	bot.Handle("/down", h.handleCountChange(directionDown))
@@ -182,6 +187,28 @@ func (h *handlers) handleStat(c telebot.Context) error {
 	err = c.Reply(fmt.Sprintf("Количество баллов у игрока %s: %s", replyTo.Sender.FirstName, countStr))
 	if err != nil {
 		return fmt.Errorf("failed to reply handleStat: %w", err)
+	}
+
+	return nil
+}
+
+func (h *handlers) handleMenu(c telebot.Context) error {
+	menu, err := h.selectUserMenu(c)
+	if err != nil {
+		slog.Error("error handling base menu", "error", err)
+
+		c.DeleteAfter(deleteTimeout)
+
+		err := c.Reply("Не смогли отобразить меню :\\(")
+		if err != nil {
+			return fmt.Errorf("failed to handle handleStat error: %w", err)
+		}
+
+		return nil
+	}
+
+	if err := c.Reply(menu); err != nil {
+		return fmt.Errorf("failed to reply base menu: %w", err)
 	}
 
 	return nil

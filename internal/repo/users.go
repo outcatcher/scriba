@@ -27,6 +27,8 @@ func (r *Repo) CreateUserFromTG(ctx context.Context, telegramUserID int64) (uuid
 		return createdID, fmt.Errorf("error inserting user: %w", err)
 	}
 
+	r.usersCache = nil
+
 	return createdID, nil
 }
 
@@ -44,6 +46,24 @@ func (r *Repo) FindUserByTelegramID(ctx context.Context, telegramID int64) (*Pla
 	}
 
 	r.usersCacheByTGID.Set(result.TGUserID, result)
+
+	return result, nil
+}
+
+// ListPlayers lists existing players.
+func (r *Repo) ListPlayers(ctx context.Context) ([]Player, error) {
+	if len(r.usersCache) > 0 {
+		return r.usersCache, nil
+	}
+
+	result := make([]Player, 0)
+
+	err := r.db.SelectContext(ctx, &result, `SELECT * FROM players;`)
+	if err != nil {
+		return nil, fmt.Errorf("error selecting players: %w", err)
+	}
+
+	r.usersCache = result
 
 	return result, nil
 }
