@@ -40,7 +40,7 @@ func (r *Repo) GetPlayerCount(ctx context.Context, id uuid.UUID) (int32, error) 
 	err := r.db.GetContext(
 		ctx,
 		&count,
-		`SELECT SUM(delta)
+		`SELECT COALESCE(SUM(delta), 0)
 		FROM count_history
 		WHERE player_id = $1;`,
 		id,
