@@ -12,6 +12,7 @@ type repository interface {
 	UpdatePlayerCount(ctx context.Context, playerID uuid.UUID, delta int16) error
 	CreateUserFromTG(ctx context.Context, telegramID int64) (uuid.UUID, error)
 	FindUserByTelegramID(ctx context.Context, telegramID int64) (*repo.Player, error)
+	ListPlayers(ctx context.Context) ([]repo.Player, error)
 }
 
 // UseCases holds main app logic.
