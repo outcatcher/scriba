@@ -7,7 +7,7 @@ import (
 
 type workflow interface {
 	// WithUseCases attaches workflow to functionality.
-	WithUseCases(*usecases.UseCases)
+	WithUseCases(useCases *usecases.UseCases)
 	// Start is a handler to start workflow.
 	Start(bot *telebot.Bot) telebot.HandlerFunc
 }

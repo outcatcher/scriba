@@ -11,8 +11,8 @@ type UserMenuWorkflow struct {
 }
 
 // WithUseCases attaches workflow to functionality.
-func (uw *UserMenuWorkflow) WithUseCases(cases *usecases.UseCases) {
-	uw.app = cases
+func (uw *UserMenuWorkflow) WithUseCases(useCases *usecases.UseCases) {
+	uw.app = useCases
 }
 
 // Start is a handler to start /menu workflow.
