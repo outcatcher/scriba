@@ -13,10 +13,10 @@ func autodelete(cfg config.BotConfig) telebot.MiddlewareFunc {
 			return next
 		}
 
-		return func(ctx telebot.Context) error {
-			ctx.DeleteAfter(lifetime)
+		return func(c telebot.Context) error {
+			c.DeleteAfter(lifetime)
 
-			return next(ctx)
+			return next(c)
 		}
 	}
 }
