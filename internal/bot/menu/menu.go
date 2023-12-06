@@ -24,7 +24,6 @@ var (
 	}
 
 	errMissingUser = errors.New("missing user info")
-	errOtherUser   = errors.New("clicked other user's menu")
 )
 
 type selectedUserState struct {
@@ -50,8 +49,6 @@ func newUserMenuState(app *usecases.UseCases, bot *telebot.Bot) *userMenuState {
 		bot: bot,
 		grp: bot.Group(),
 	}
-
-	state.grp.Use(state.restrictToAuthor)
 
 	return state
 }
