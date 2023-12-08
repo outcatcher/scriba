@@ -20,6 +20,6 @@ func (uw *UserMenuWorkflow) Start(bot *telebot.Bot) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
 		state := newUserMenuState(uw.app, bot)
 
-		return state.selectUser(c)
+		return state.selectPlayer(c)
 	}
 }
