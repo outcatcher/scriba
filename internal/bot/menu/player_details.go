@@ -32,7 +32,7 @@ func (u *userMenuState) userDetails(ctx context.Context, user selectedUserState)
 		rows := u.scoreButtonsToRows(ctx, menu, changeUserScoreButtons)
 
 		zeroBtn := menu.Data("Обнулить очки", "0")
-		u.grp.Handle(&zeroBtn, u.changeScore(ctx, -score))
+		u.grp.Handle(&zeroBtn, u.changeScore(ctx, -score), u.forbidSelf)
 
 		rows = append(rows, telebot.Row{zeroBtn})
 

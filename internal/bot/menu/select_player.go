@@ -70,10 +70,6 @@ func (u *userMenuState) selectPlayer(c telebot.Context) error {
 	rows := make([]telebot.Row, 0, len(players)+1)
 
 	for _, player := range u.playersList(c, players) {
-		if u.baseMsg.Sender != nil && player.telegramID == u.baseMsg.Sender.ID {
-			continue
-		}
-
 		btn := menu.Data(player.name, strconv.FormatInt(player.telegramID, 10))
 
 		selectedUser := selectedUserState{player.name, player.telegramID}
