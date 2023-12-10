@@ -13,8 +13,8 @@ type Count struct {
 	PlayerID uuid.UUID `db:"player_id"`
 }
 
-// UpdatePlayerCount updates player point count.
-func (r *Repo) UpdatePlayerCount(ctx context.Context, playerID uuid.UUID, delta int16) error {
+// InsertPlayerCountChange updates player point count.
+func (r *Repo) InsertPlayerCountChange(ctx context.Context, playerID uuid.UUID, delta int16) error {
 	_, err := r.db.ExecContext(
 		ctx,
 		`INSERT INTO count_history (delta, player_id) VALUES ($1, $2);`,

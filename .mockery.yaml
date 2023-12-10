@@ -1,0 +1,8 @@
+with-expecter: true
+all: true
+recursive: false
+dir: "{{.InterfaceDir}}/mocks"
+outpkg: "mocks"
+filename: "mock_{{.InterfaceName}}.go"
+packages:
+  github.com/outcatcher/scriba/internal/usecases:

@@ -17,6 +17,20 @@ tasks:
     desc: Run lint on the project
     cmd: golangci-lint run ./...
 
+  generate:
+    desc: Generate mocks
+    cmds:
+      - mockery
+
+  test:
+    desc: Run unit tests
+    deps:
+      - generate
+      - lint
+    cmds:
+      - go test -v -cover -covermode atomic -coverpkg=./... -coverprofile=coverage.out -count=1 -v ./...
+      - go tool cover -html=coverage.out -o coverage.html
+
   build:
     desc: Build app executable
     cmd: go build -trimpath -o "{{ .binary_path }}" ./cmd/bot/main.go
