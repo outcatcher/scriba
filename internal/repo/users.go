@@ -14,7 +14,7 @@ type player struct {
 	TGUserID int64     `db:"tg_user_id"`
 }
 
-func (p player) ToEntity() *entities.Player {
+func (p player) toEntity() *entities.Player {
 	return &entities.Player{
 		ID:         p.ID,
 		TelegramID: p.TGUserID,
@@ -53,9 +53,9 @@ func (r *Repo) FindUserByTelegramID(ctx context.Context, telegramID int64) (*ent
 		return nil, fmt.Errorf("error selecting player by Telegram ID: %w", err)
 	}
 
-	r.usersCacheByTGID.Set(result.TGUserID, result.ToEntity())
+	r.usersCacheByTGID.Set(result.TGUserID, result.toEntity())
 
-	return result.ToEntity(), nil
+	return result.toEntity(), nil
 }
 
 // ListPlayers lists existing players.
@@ -74,7 +74,7 @@ func (r *Repo) ListPlayers(ctx context.Context) ([]entities.Player, error) {
 	eResult := make([]entities.Player, len(result))
 
 	for i, item := range result {
-		eResult[i] = *item.ToEntity()
+		eResult[i] = *item.toEntity()
 	}
 
 	r.usersCache = eResult

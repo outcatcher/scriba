@@ -1,17 +1,17 @@
 package menu
 
 import (
-	"github.com/outcatcher/scriba/internal/bot"
+	"github.com/outcatcher/scriba/internal/bot/schema"
 	"gopkg.in/telebot.v3"
 )
 
 // UserMenuWorkflow is workflow for /menu command.
 type UserMenuWorkflow struct {
-	app bot.UseCases
+	app schema.UseCases
 }
 
 // WithUseCases attaches workflow to functionality.
-func (uw *UserMenuWorkflow) WithUseCases(useCases bot.UseCases) {
+func (uw *UserMenuWorkflow) WithUseCases(useCases schema.UseCases) {
 	uw.app = useCases
 }
 

@@ -3,7 +3,7 @@ package menu
 import (
 	"errors"
 
-	"github.com/outcatcher/scriba/internal/bot"
+	"github.com/outcatcher/scriba/internal/bot/schema"
 	"gopkg.in/telebot.v3"
 )
 
@@ -32,7 +32,7 @@ type selectedUserState struct {
 }
 
 type userMenuState struct {
-	app bot.UseCases
+	app schema.UseCases
 	bot *telebot.Bot
 	grp *telebot.Group
 
@@ -43,7 +43,7 @@ type userMenuState struct {
 	currentLabel string
 }
 
-func newUserMenuState(app bot.UseCases, bot *telebot.Bot) *userMenuState {
+func newUserMenuState(app schema.UseCases, bot *telebot.Bot) *userMenuState {
 	state := &userMenuState{
 		app: app,
 		bot: bot,

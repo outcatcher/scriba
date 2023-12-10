@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"strconv"
 
-	"github.com/outcatcher/scriba/internal/usecases"
+	"github.com/outcatcher/scriba/internal/entities"
 	"gopkg.in/telebot.v3"
 )
 
-func (u *userMenuState) playersList(c telebot.Context, players []usecases.Player) []selectedUserState {
+func (u *userMenuState) playersList(c telebot.Context, players []entities.Player) []selectedUserState {
 	result := make([]selectedUserState, 0, len(players))
 
 	switch c.Chat().Type { //nolint:exhaustive
