@@ -10,34 +10,34 @@ import (
 	"gopkg.in/telebot.v3"
 )
 
-func (u *userMenuState) playersList(c telebot.Context, players []entities.Player) []selectedUserState {
-	result := make([]selectedUserState, 0, len(players))
+func playersList(c telebot.Context, players []entities.Player) []userInfo {
+	result := make([]userInfo, 0, len(players))
 
 	switch c.Chat().Type { //nolint:exhaustive
 	case telebot.ChatPrivate:
 		for _, player := range players {
-			chat, err := u.bot.ChatByID(player.TelegramID)
+			chat, err := c.Bot().ChatByID(player.TelegramID)
 			if err != nil {
 				slog.Error("failed to get chat membership", "chat_id", c.Chat().ID, "user_id", player.TelegramID)
 
 				continue
 			}
 
-			result = append(result, selectedUserState{
+			result = append(result, userInfo{
 				name:       chat.FirstName,
 				telegramID: player.TelegramID,
 			})
 		}
 	case telebot.ChatGroup, telebot.ChatSuperGroup:
 		for _, player := range players {
-			member, err := u.bot.ChatMemberOf(c.Chat(), &telebot.User{ID: player.TelegramID})
+			member, err := c.Bot().ChatMemberOf(c.Chat(), &telebot.User{ID: player.TelegramID})
 			if err != nil {
 				slog.Error("failed to get chat membership", "chat_id", c.Chat().ID, "user_id", player.TelegramID)
 
 				continue
 			}
 
-			result = append(result, selectedUserState{
+			result = append(result, userInfo{
 				name:       member.User.FirstName,
 				telegramID: player.TelegramID,
 			})
@@ -69,18 +69,18 @@ func (u *userMenuState) selectPlayer(c telebot.Context) error {
 
 	rows := make([]telebot.Row, 0, len(players)+1)
 
-	for _, player := range u.playersList(c, players) {
+	for _, player := range playersList(c, players) {
 		btn := menu.Data(player.name, strconv.FormatInt(player.telegramID, 10))
 
-		selectedUser := selectedUserState{player.name, player.telegramID}
+		selectedUser := userInfo{player.name, player.telegramID}
 
-		u.grp.Handle(&btn, u.userDetails(ctx, selectedUser))
+		u.handler.Handle(&btn, u.userDetails(ctx, selectedUser))
 
 		rows = append(rows, menu.Row(btn))
 	}
 
 	exitBtn := menu.Data(textExit, btnExit)
-	u.grp.Handle(&exitBtn, u.exit)
+	u.handler.Handle(&exitBtn, u.exit)
 
 	rows = append(rows, telebot.Row{exitBtn})
 

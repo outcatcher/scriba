@@ -15,10 +15,17 @@ func (uw *UserMenuWorkflow) WithUseCases(useCases schema.UseCases) {
 	uw.app = useCases
 }
 
-// Start is a handler to start /menu workflow.
-func (uw *UserMenuWorkflow) Start(bot *telebot.Bot) telebot.HandlerFunc {
+// EntryPoint is a handler to start /menu workflow.
+func (uw *UserMenuWorkflow) EntryPoint(handler schema.Handler) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
-		state := newUserMenuState(uw.app, bot)
+		if handler == nil {
+			handler = c.Bot()
+		}
+
+		state := &userMenuState{
+			app:     uw.app,
+			handler: handler,
+		}
 
 		return state.selectPlayer(c)
 	}

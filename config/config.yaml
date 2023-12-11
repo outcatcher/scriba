@@ -7,7 +7,6 @@ storage:
     password: postgres
 
 bot:
-  method: poll # poll / webhook
   poll:
     interval: 3s
   webhook:

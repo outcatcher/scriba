@@ -8,9 +8,9 @@ import (
 	"gopkg.in/telebot.v3"
 )
 
-func (u *userMenuState) userDetails(ctx context.Context, user selectedUserState) telebot.HandlerFunc {
+func (u *userMenuState) userDetails(ctx context.Context, user userInfo) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
-		u.currentUser = &user
+		u.selectedUser = &user
 		u.currentLabel = labelUserInfo
 
 		menu := &telebot.ReplyMarkup{
@@ -32,15 +32,15 @@ func (u *userMenuState) userDetails(ctx context.Context, user selectedUserState)
 		rows := u.scoreButtonsToRows(ctx, menu, changeUserScoreButtons)
 
 		zeroBtn := menu.Data("Обнулить очки", "0")
-		u.grp.Handle(&zeroBtn, u.changeScore(ctx, -score), u.forbidSelf)
+		u.handler.Handle(&zeroBtn, u.changeScore(ctx, -score), u.forbidSelf)
 
 		rows = append(rows, telebot.Row{zeroBtn})
 
 		exitBtn := menu.Data(textExit, btnExit)
-		u.grp.Handle(&exitBtn, u.exit)
+		u.handler.Handle(&exitBtn, u.exit)
 
 		backBtn := menu.Data(textBack, btnBack)
-		u.grp.Handle(&backBtn, u.back)
+		u.handler.Handle(&backBtn, u.back)
 
 		// some other data here
 		rows = append(rows, telebot.Row{backBtn, exitBtn})
