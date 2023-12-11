@@ -17,15 +17,12 @@ linters:
     - varcheck
     - ifshort
     - exhaustivestruct
-    - rowserrcheck
-    - structcheck
-    - wastedassign
     # meaningfully disabled
-    - ireturn # returning generics
     - gochecknoglobals
     - exhaustruct
     - nosprintfhostport # not supporting ipv6 addresses in configuration
     - depguard
+    - tparallel # duplicates paralleltest
 
 linters-settings:
   tagliatelle:
@@ -70,6 +67,7 @@ issues:
       linters:
         - bodyclose  # we use close it in a helper method
         - noctx
+        - gosec
     - linters:
         - godox
       text: "TODO"

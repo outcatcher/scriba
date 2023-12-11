@@ -9,9 +9,9 @@ import (
 func (u *userMenuState) forbidSelf(next telebot.HandlerFunc) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
 		if c.Sender() != nil &&
-			u.currentUser != nil &&
-			c.Sender().ID == u.currentUser.telegramID {
-			slog.Error("users tried to rate themselves", "sender", u.currentUser.telegramID)
+			u.selectedUser != nil &&
+			c.Sender().ID == u.selectedUser.telegramID {
+			slog.Error("users tried to rate themselves", "sender", u.selectedUser.telegramID)
 
 			errorReply(c, "Вы пытаетесь изменить балы для самого себя")
 

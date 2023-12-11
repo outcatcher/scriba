@@ -3,68 +3,26 @@ package menu
 import (
 	"errors"
 
-	"github.com/outcatcher/scriba/internal/usecases"
+	"github.com/outcatcher/scriba/internal/bot/schema"
 	"gopkg.in/telebot.v3"
 )
 
-const (
-	btnExit = "exit"
-	btnBack = "back"
+var errMissingUser = errors.New("missing user info")
 
-	textExit = "❌ выход"
-	textBack = "🔙 назад"
-
-	labelUserInfo = "user_info"
-)
-
-var (
-	changeUserScoreButtons = [][]int32{
-		{-1, +1},
-		{-4, +4},
-	}
-
-	errMissingUser = errors.New("missing user info")
-)
-
-type selectedUserState struct {
+type userInfo struct {
 	name       string
 	telegramID int64
 }
 
 type userMenuState struct {
-	app *usecases.UseCases
-	bot *telebot.Bot
-	grp *telebot.Group
+	app schema.UseCases // application logic handlers
 
-	baseMsg     *telebot.Message // track /menu request
-	baseMenuMsg *telebot.Message // track menu message to edit it in place
+	handler schema.Handler // handler to handle subsequent commands (can be Bot or Group)
 
-	currentUser  *selectedUserState
+	baseMsg     telebot.Editable // track /menu request
+	baseMenuMsg telebot.Editable // track menu message to edit it in place
+
+	selectedUser *userInfo
+
 	currentLabel string
-}
-
-func newUserMenuState(app *usecases.UseCases, bot *telebot.Bot) *userMenuState {
-	state := &userMenuState{
-		app: app,
-		bot: bot,
-		grp: bot.Group(),
-	}
-
-	return state
-}
-
-func (u *userMenuState) back(c telebot.Context) error {
-	switch u.currentLabel {
-	case labelUserInfo:
-		return u.selectPlayer(c)
-	default:
-		return nil
-	}
-}
-
-func (u *userMenuState) exit(c telebot.Context) error {
-	_ = c.Bot().Delete(u.baseMenuMsg)
-	_ = c.Bot().Delete(u.baseMsg)
-
-	return nil
 }

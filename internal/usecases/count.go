@@ -12,7 +12,7 @@ func (u *UseCases) UpdateCountByTelegramID(ctx context.Context, telegramID int64
 		return fmt.Errorf("error finding player: %w", err)
 	}
 
-	err = u.repo.UpdatePlayerCount(ctx, user.ID, delta)
+	err = u.repo.InsertPlayerCountChange(ctx, user.ID, delta)
 	if err != nil {
 		return fmt.Errorf("error updating player count: %w", err)
 	}

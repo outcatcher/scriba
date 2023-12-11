@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/maypok86/otter"
+	"github.com/outcatcher/scriba/internal/entities"
 )
 
 const (
@@ -15,19 +16,21 @@ const (
 type Repo struct {
 	db *sqlx.DB
 
-	usersCache       []Player
-	usersCacheByTGID *otter.Cache[int64, *Player]
+	usersCache       []entities.Player
+	usersCacheByTGID *otter.Cache[int64, *entities.Player]
 	countSumCache    *otter.Cache[uuid.UUID, int32]
 }
 
 // New creates new DB instance with initialized caches.
 func New(db *sqlx.DB) *Repo {
-	usersCacheByTGID, err := otter.MustBuilder[int64, *Player](cacheCapacity).ShardCount(cacheShardCount).Build()
+	usersCacheByTGID, err := otter.MustBuilder[int64, *entities.Player](cacheCapacity).
+		ShardCount(cacheShardCount).Build()
 	if err != nil {
 		panic(err)
 	}
 
-	countCache, err := otter.MustBuilder[uuid.UUID, int32](cacheCapacity).ShardCount(cacheShardCount).Build()
+	countCache, err := otter.MustBuilder[uuid.UUID, int32](cacheCapacity).
+		ShardCount(cacheShardCount).Build()
 	if err != nil {
 		panic(err)
 	}
