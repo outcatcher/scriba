@@ -1,3 +1,5 @@
+go: '1.21.4'
+
 run:
   deadline: 5m
 
@@ -55,7 +57,14 @@ linters-settings:
       - name: time-naming
       - name: context-keys-type
       - name: context-as-argument
-
+  forbidigo:
+    forbid:
+      - p: 'c\.Bot'
+        msg: "can't be mocked, use instance of schema.TelegramAPI instead"
+      - p: 'c\.Reply'
+        msg: "can't be mocked, use instance of schema.TelegramAPI instead"
+      - p: 'context\.Background'
+        msg: "dont' spawn new context, use context from telebot context instead"
 issues:
   exclude-use-default: false
   exclude-rules:
@@ -68,8 +77,12 @@ issues:
         - bodyclose  # we use close it in a helper method
         - noctx
         - gosec
+        - forbidigo
     - linters:
         - godox
       text: "TODO"
+    - path: main.go
+      linters:
+        - forbidigo
   max-issues-per-linter: 0
   max-same-issues: 0

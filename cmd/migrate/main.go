@@ -28,6 +28,6 @@ func main() {
 	ctx := context.Background()
 
 	if err := storage.ApplyMigrations(ctx, cfg.Storage.Postgres, *migrationsPath); err != nil {
-		log.Fatal(err)
+		log.Fatalln("failed to apply migrations", err)
 	}
 }

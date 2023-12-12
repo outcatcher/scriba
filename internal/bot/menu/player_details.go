@@ -1,17 +1,19 @@
 package menu
 
 import (
-	"context"
 	"fmt"
 	"strconv"
 
+	"github.com/outcatcher/scriba/internal/bot/common"
 	"gopkg.in/telebot.v3"
 )
 
-func (u *userMenuState) userDetails(ctx context.Context, user userInfo) telebot.HandlerFunc {
+func (u *userMenuState) userDetails(user telegramUserInfo) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
+		ctx := common.GetContextFromContext(c)
+
 		u.selectedUser = &user
-		u.currentLabel = labelUserInfo
+		u.previousLabel = labelSelectPlayer
 
 		menu := &telebot.ReplyMarkup{
 			OneTimeKeyboard: true,
@@ -29,10 +31,10 @@ func (u *userMenuState) userDetails(ctx context.Context, user userInfo) telebot.
 			scoreStr = "\\" + scoreStr // escape -
 		}
 
-		rows := u.scoreButtonsToRows(ctx, menu, changeUserScoreButtons)
+		rows := u.scoreButtonsToRows(menu, changeUserScoreButtons)
 
 		zeroBtn := menu.Data("Обнулить очки", "0")
-		u.handler.Handle(&zeroBtn, u.changeScore(ctx, -score), u.forbidSelf)
+		u.handler.Handle(&zeroBtn, u.changeScore(-score), u.forbidSelf)
 
 		rows = append(rows, telebot.Row{zeroBtn})
 
@@ -49,7 +51,7 @@ func (u *userMenuState) userDetails(ctx context.Context, user userInfo) telebot.
 
 		messageText := fmt.Sprintf("Количество баллов у игрока %s: %s", user.name, scoreStr)
 
-		msg, err := c.Bot().Edit(u.baseMenuMsg, messageText, menu)
+		msg, err := u.api.Edit(u.baseMenuMsg, messageText, menu)
 		if err != nil {
 			return fmt.Errorf("error editing menu: %w", err)
 		}

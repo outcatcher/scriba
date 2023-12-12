@@ -1,15 +1,17 @@
 package menu
 
 import (
-	"context"
 	"fmt"
 	"math"
 
+	"github.com/outcatcher/scriba/internal/bot/common"
 	"gopkg.in/telebot.v3"
 )
 
-func (u *userMenuState) changeScore(ctx context.Context, delta int32) telebot.HandlerFunc {
+func (u *userMenuState) changeScore(delta int32) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
+		ctx := common.GetContextFromContext(c)
+
 		if u.selectedUser == nil {
 			return errMissingUser
 		}
@@ -27,7 +29,7 @@ func (u *userMenuState) changeScore(ctx context.Context, delta int32) telebot.Ha
 			return fmt.Errorf("error updating player's count: %w", err)
 		}
 
-		return u.userDetails(ctx, *u.selectedUser)(c)
+		return u.userDetails(*u.selectedUser)(c)
 	}
 }
 
@@ -42,8 +44,7 @@ func uniqueByNumber(src int32) string {
 	return fmt.Sprintf("%s%d", prefix, int32(math.Abs(float64(src))))
 }
 
-func (u *userMenuState) scoreButtonsToRows(
-	ctx context.Context, menu *telebot.ReplyMarkup, src [][]int32,
+func (u *userMenuState) scoreButtonsToRows(menu *telebot.ReplyMarkup, src [][]int32,
 ) []telebot.Row {
 	rows := make([]telebot.Row, len(src))
 
@@ -54,7 +55,7 @@ func (u *userMenuState) scoreButtonsToRows(
 			btnValue := fmt.Sprintf("%+d", num)
 			btn := menu.Data(btnValue, uniqueByNumber(num))
 
-			u.handler.Handle(&btn, u.changeScore(ctx, num), u.forbidSelf)
+			u.handler.Handle(&btn, u.changeScore(num), u.forbidSelf)
 
 			row[j] = btn
 		}

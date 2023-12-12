@@ -1,4 +1,4 @@
-package menu
+package register
 
 import (
 	"github.com/outcatcher/scriba/internal/bot/schema"
@@ -24,12 +24,13 @@ func (w *Workflow) WithTelegramAPI(api schema.TelegramAPI) {
 // EntryPoint is a handler to start /menu workflow.
 func (w *Workflow) EntryPoint(handler schema.Handler) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
-		state := &userMenuState{
+		// create new state instance on every /menu command
+		startMenuState := state{
 			app:     w.app,
 			api:     w.api,
 			handler: handler,
 		}
 
-		return state.selectPlayer(c)
+		return startMenuState.handleStartMenu(c)
 	}
 }

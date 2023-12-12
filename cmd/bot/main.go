@@ -11,6 +11,7 @@ import (
 
 	"github.com/outcatcher/scriba/internal/bot"
 	"github.com/outcatcher/scriba/internal/core/config"
+	"github.com/outcatcher/scriba/internal/usecases"
 )
 
 var configPath = flag.String("config", "./config/config.yaml", "Configuration file to be used")
@@ -25,7 +26,12 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	if err := bot.Start(ctx, cfg); err != nil {
+	app, err := usecases.InitApp(cfg)
+	if err != nil {
+		log.Fatalln("error initializing app", err)
+	}
+
+	if err := bot.Start(ctx, cfg.Bot, app); err != nil {
 		log.Fatalln("failed to start bot", err)
 	}
 

@@ -1,14 +1,14 @@
-package bot
+package common
 
 import (
-	"github.com/outcatcher/scriba/internal/core/config"
+	"time"
+
 	"gopkg.in/telebot.v3"
 )
 
-func autodelete(cfg config.BotConfig) telebot.MiddlewareFunc {
+// AutodeleteMiddleware - middleware to support automatic deletion of messages.
+func AutodeleteMiddleware(lifetime time.Duration) telebot.MiddlewareFunc {
 	return func(next telebot.HandlerFunc) telebot.HandlerFunc {
-		lifetime := cfg.Messages.Lifetime
-
 		if lifetime == 0 {
 			return next
 		}
