@@ -6,3 +6,10 @@ outpkg: "mocks"
 filename: "mock_{{.InterfaceName}}.go"
 packages:
   github.com/outcatcher/scriba/internal/usecases:
+  github.com/outcatcher/scriba/internal/bot/schema:
+  gopkg.in/telebot.v3:
+    interfaces:
+      Context:
+    config:
+      all: false
+      dir: ./internal/bot/schema/mocks

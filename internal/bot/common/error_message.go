@@ -1,16 +1,18 @@
-package menu
+package common
 
 import (
 	"log/slog"
 	"time"
 
+	"github.com/outcatcher/scriba/internal/bot/schema"
 	"gopkg.in/telebot.v3"
 )
 
 const deleteTimeout = 2 * time.Second
 
-func errorReply(c telebot.Context, text string) {
-	replyMsg, err := c.Bot().Reply(c.Message(), text)
+// ErrorReply - reply with internal error.
+func ErrorReply(replier schema.TelegramAPI, message *telebot.Message, text string) {
+	replyMsg, err := replier.Reply(message, text)
 	if err != nil {
 		slog.Error("failed to reply with error", "error", err)
 
@@ -18,7 +20,7 @@ func errorReply(c telebot.Context, text string) {
 	}
 
 	time.AfterFunc(deleteTimeout, func() {
-		err := c.Bot().Delete(replyMsg)
+		err := replier.Delete(replyMsg)
 		if err != nil {
 			slog.Error("failed to delete error message", "error", err)
 		}

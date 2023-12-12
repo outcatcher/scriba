@@ -1,15 +1,6 @@
 package config
 
-import (
-	"fmt"
-	"log/slog"
-	"os"
-	"path/filepath"
-	"time"
-
-	"github.com/caarlos0/env/v10"
-	"gopkg.in/yaml.v3"
-)
+import "time"
 
 // PostgresConfig - postgres connection configuration.
 type PostgresConfig struct {
@@ -47,37 +38,4 @@ type BotConfig struct {
 type Configuration struct {
 	Storage StorageConfig `yaml:"storage"`
 	Bot     BotConfig     `yaml:"bot"`
-}
-
-// LoadConfig loads usecases configuration.
-func LoadConfig(configPath string, useEnv bool) (*Configuration, error) {
-	file, err := os.Open(filepath.Clean(configPath))
-	if err != nil {
-		return nil, fmt.Errorf("error loading config: failed to open file: %w", err)
-	}
-
-	defer func() {
-		err := file.Close()
-		if err != nil {
-			slog.Error("failed to close file", "error", err)
-		}
-	}()
-
-	decoder := yaml.NewDecoder(file)
-
-	config := new(Configuration)
-
-	if err := decoder.Decode(config); err != nil {
-		return nil, fmt.Errorf("error loading config: error decoding yaml: %w", err)
-	}
-
-	if !useEnv {
-		return config, nil
-	}
-
-	if err := env.Parse(config); err != nil {
-		return nil, fmt.Errorf("error loading config: error loading env vars: %w", err)
-	}
-
-	return config, nil
 }

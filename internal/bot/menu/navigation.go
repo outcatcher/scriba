@@ -9,7 +9,7 @@ const (
 	textExit = "❌ выход"
 	textBack = "🔙 назад"
 
-	labelUserInfo = "user_info"
+	labelSelectPlayer = "select_player"
 )
 
 var changeUserScoreButtons = [][]int32{
@@ -18,8 +18,8 @@ var changeUserScoreButtons = [][]int32{
 }
 
 func (u *userMenuState) back(c telebot.Context) error {
-	switch u.currentLabel {
-	case labelUserInfo:
+	switch u.previousLabel {
+	case labelSelectPlayer:
 		return u.selectPlayer(c)
 	default:
 		return nil
@@ -27,8 +27,8 @@ func (u *userMenuState) back(c telebot.Context) error {
 }
 
 func (u *userMenuState) exit(c telebot.Context) error {
-	_ = c.Bot().Delete(u.baseMenuMsg)
-	_ = c.Bot().Delete(u.baseMsg)
+	_ = u.api.Delete(u.baseMenuMsg)
+	_ = u.api.Delete(u.baseMsg)
 
 	return nil
 }
