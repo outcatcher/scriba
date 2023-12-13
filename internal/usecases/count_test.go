@@ -23,7 +23,8 @@ func TestCount(t *testing.T) {
 	t.Run("UpdateCountByTelegramID", func(t *testing.T) {
 		t.Parallel()
 
-		mockRepo := new(mocks.Mockrepository)
+		mockRepo := mocks.NewMockrepository(t)
+
 		cases := new(UseCases)
 
 		cases.WithRepo(mockRepo)
@@ -35,14 +36,12 @@ func TestCount(t *testing.T) {
 
 		err := cases.UpdateCountByTelegramID(ctx, player.TelegramID, countDelta)
 		require.NoError(t, err)
-
-		mockRepo.AssertExpectations(t)
 	})
 
 	t.Run("GetPlayerCountByTelegramID", func(t *testing.T) {
 		t.Parallel()
 
-		mockRepo := new(mocks.Mockrepository)
+		mockRepo := mocks.NewMockrepository(t)
 		cases := new(UseCases)
 
 		cases.WithRepo(mockRepo)
@@ -55,7 +54,5 @@ func TestCount(t *testing.T) {
 		count, err := cases.GetPlayerCountByTelegramID(ctx, player.TelegramID)
 		require.NoError(t, err)
 		require.Equal(t, expectedCount, count)
-
-		mockRepo.AssertExpectations(t)
 	})
 }

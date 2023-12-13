@@ -50,8 +50,8 @@ func Start(ctx context.Context, botConfig config.BotConfig, app schema.UseCases)
 		app: app,
 		bot: bot,
 	}
-	hdl.addWorkflow("/start", new(register.Workflow))
-	hdl.addWorkflow("/menu", new(menu.Workflow))
+	hdl.AddWorkflow("/start", new(register.Workflow))
+	hdl.AddWorkflow("/menu", new(menu.Workflow))
 
 	go bot.Start()
 

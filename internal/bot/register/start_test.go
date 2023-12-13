@@ -31,24 +31,17 @@ type workflowSuite struct {
 // suite with such setup/teardown can't have parallel tests
 
 func (s *workflowSuite) SetupTest() {
-	s.tgMock = new(mocks.MockTelegramAPI)
-	s.appMock = new(mocks.MockUseCases)
-	s.handlerMock = new(mocks.MockHandler)
-	s.contextMock = new(mocks.MockContext)
+	t := s.T()
+
+	s.tgMock = mocks.NewMockTelegramAPI(t)
+	s.appMock = mocks.NewMockUseCases(t)
+	s.handlerMock = mocks.NewMockHandler(t)
+	s.contextMock = mocks.NewMockContext(t)
 
 	s.workflow = new(Workflow)
 
 	s.workflow.WithUseCases(s.appMock)
 	s.workflow.WithTelegramAPI(s.tgMock)
-}
-
-func (s *workflowSuite) TearDownTest() {
-	t := s.T()
-
-	s.tgMock.AssertExpectations(t)
-	s.appMock.AssertExpectations(t)
-	s.handlerMock.AssertExpectations(t)
-	s.contextMock.AssertExpectations(t)
 }
 
 func (s *workflowSuite) TestStartWorkflow() { //nolint:funlen  // the simplest way used
@@ -94,7 +87,7 @@ func (s *workflowSuite) TestStartWorkflow() { //nolint:funlen  // the simplest w
 		inReply string
 	}{
 		{"ok", nil, expectedSender.FirstName},
-		{"fail", errors.New("TEST ERROR"), "Не смогли"}, //nolint:goerr113
+		{"fail", errors.New("TEST ERROR"), "Не смогли"},
 	}
 
 	for i := range cases {

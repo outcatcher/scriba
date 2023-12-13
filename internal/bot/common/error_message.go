@@ -8,7 +8,7 @@ import (
 	"gopkg.in/telebot.v3"
 )
 
-const deleteTimeout = 2 * time.Second
+var deleteTimeout = 2 * time.Second // made a var to simplify tests  todo: move to configuration
 
 // ErrorReply - reply with internal error.
 func ErrorReply(replier schema.TelegramAPI, message *telebot.Message, text string) {

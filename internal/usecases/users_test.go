@@ -15,7 +15,7 @@ func TestRegisterWithTelegram(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	mockRepo := new(mocks.Mockrepository)
+	mockRepo := mocks.NewMockrepository(t)
 	cases := new(UseCases)
 
 	cases.WithRepo(mockRepo)
@@ -26,15 +26,13 @@ func TestRegisterWithTelegram(t *testing.T) {
 
 	err := cases.RegisterWithTelegram(ctx, expectedID)
 	require.NoError(t, err)
-
-	mockRepo.AssertExpectations(t)
 }
 
 func TestListPlayers(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	mockRepo := new(mocks.Mockrepository)
+	mockRepo := mocks.NewMockrepository(t)
 	cases := new(UseCases)
 
 	cases.WithRepo(mockRepo)

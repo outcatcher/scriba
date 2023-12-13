@@ -7,6 +7,11 @@ filename: "mock_{{.InterfaceName}}.go"
 packages:
   github.com/outcatcher/scriba/internal/usecases:
   github.com/outcatcher/scriba/internal/bot/schema:
+  github.com/outcatcher/scriba/internal/repo:
+    config:
+      all: false
+    interfaces:
+      queryExecutor:
   gopkg.in/telebot.v3:
     interfaces:
       Context:
