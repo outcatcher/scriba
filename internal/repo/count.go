@@ -7,12 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// Count describes structure of count_history table.
-type Count struct {
-	Delta    int16     `db:"delta"`
-	PlayerID uuid.UUID `db:"player_id"`
-}
-
 // InsertPlayerCountChange updates player point count.
 func (r *Repo) InsertPlayerCountChange(ctx context.Context, playerID uuid.UUID, delta int16) error {
 	_, err := r.db.ExecContext(

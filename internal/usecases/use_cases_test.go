@@ -10,7 +10,7 @@ import (
 func TestUseCasesWithRepo(t *testing.T) {
 	t.Parallel()
 
-	repo := new(mocks.Mockrepository)
+	repo := mocks.NewMockrepository(t)
 	cases := new(UseCases)
 
 	cases.WithRepo(repo)

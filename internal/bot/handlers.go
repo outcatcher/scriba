@@ -10,16 +10,8 @@ type handlers struct {
 	bot *telebot.Bot
 }
 
-type workflow interface {
-	// WithUseCases attaches workflow to functionality.
-	WithUseCases(useCases schema.UseCases)
-	// WithTelegramAPI attaches telegram API client.
-	WithTelegramAPI(api schema.TelegramAPI)
-	// EntryPoint is a handler to start workflow.
-	EntryPoint(handler schema.Handler) telebot.HandlerFunc
-}
-
-func (h *handlers) addWorkflow(endpoint string, w workflow) {
+// AddWorkflow adds workflow handling an endpoint.
+func (h *handlers) AddWorkflow(endpoint string, w schema.Workflow) {
 	w.WithUseCases(h.app)
 	w.WithTelegramAPI(h.bot)
 

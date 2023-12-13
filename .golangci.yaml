@@ -78,6 +78,7 @@ issues:
         - noctx
         - gosec
         - forbidigo
+        - goerr113
     - linters:
         - godox
       text: "TODO"
