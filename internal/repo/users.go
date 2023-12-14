@@ -9,13 +9,13 @@ import (
 )
 
 // player describes structure of users table.
-type player struct {
+type player[T entities.Player] struct {
 	ID       uuid.UUID `db:"id"`
 	TGUserID int64     `db:"tg_user_id"`
 }
 
-func (p player) toEntity() *entities.Player {
-	return &entities.Player{
+func (p player[T]) toEntity() *T {
+	return &T{
 		ID:         p.ID,
 		TelegramID: p.TGUserID,
 	}
@@ -46,7 +46,7 @@ func (r *Repo) FindUserByTelegramID(ctx context.Context, telegramID int64) (*ent
 		return value, nil
 	}
 
-	result := new(player)
+	result := new(player[entities.Player])
 
 	err := r.db.GetContext(ctx, result, `SELECT * FROM players WHERE tg_user_id = $1;`, telegramID)
 	if err != nil {
@@ -64,20 +64,14 @@ func (r *Repo) ListPlayers(ctx context.Context) ([]entities.Player, error) {
 		return r.usersCache, nil
 	}
 
-	result := make([]player, 0)
+	result := make([]player[entities.Player], 0)
 
 	err := r.db.SelectContext(ctx, &result, `SELECT * FROM players;`)
 	if err != nil {
 		return nil, fmt.Errorf("error selecting players: %w", err)
 	}
 
-	eResult := make([]entities.Player, len(result))
+	r.usersCache = convertEntitySlice(result)
 
-	for i, item := range result {
-		eResult[i] = *item.toEntity()
-	}
-
-	r.usersCache = eResult
-
-	return eResult, nil
+	return r.usersCache, nil
 }

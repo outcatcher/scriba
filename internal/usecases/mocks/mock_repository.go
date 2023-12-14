@@ -8,6 +8,8 @@ import (
 	entities "github.com/outcatcher/scriba/internal/entities"
 	mock "github.com/stretchr/testify/mock"
 
+	time "time"
+
 	uuid "github.com/google/uuid"
 )
 
@@ -130,6 +132,63 @@ func (_c *Mockrepository_FindUserByTelegramID_Call) Return(_a0 *entities.Player,
 }
 
 func (_c *Mockrepository_FindUserByTelegramID_Call) RunAndReturn(run func(context.Context, int64) (*entities.Player, error)) *Mockrepository_FindUserByTelegramID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetCountHistoryForPeriod provides a mock function with given fields: ctx, id, startDate, endDate
+func (_m *Mockrepository) GetCountHistoryForPeriod(ctx context.Context, id uuid.UUID, startDate time.Time, endDate time.Time) ([]entities.CountHistoryEvent, error) {
+	ret := _m.Called(ctx, id, startDate, endDate)
+
+	var r0 []entities.CountHistoryEvent
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, time.Time, time.Time) ([]entities.CountHistoryEvent, error)); ok {
+		return rf(ctx, id, startDate, endDate)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, time.Time, time.Time) []entities.CountHistoryEvent); ok {
+		r0 = rf(ctx, id, startDate, endDate)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entities.CountHistoryEvent)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID, time.Time, time.Time) error); ok {
+		r1 = rf(ctx, id, startDate, endDate)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Mockrepository_GetCountHistoryForPeriod_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetCountHistoryForPeriod'
+type Mockrepository_GetCountHistoryForPeriod_Call struct {
+	*mock.Call
+}
+
+// GetCountHistoryForPeriod is a helper method to define mock.On call
+//   - ctx context.Context
+//   - id uuid.UUID
+//   - startDate time.Time
+//   - endDate time.Time
+func (_e *Mockrepository_Expecter) GetCountHistoryForPeriod(ctx interface{}, id interface{}, startDate interface{}, endDate interface{}) *Mockrepository_GetCountHistoryForPeriod_Call {
+	return &Mockrepository_GetCountHistoryForPeriod_Call{Call: _e.mock.On("GetCountHistoryForPeriod", ctx, id, startDate, endDate)}
+}
+
+func (_c *Mockrepository_GetCountHistoryForPeriod_Call) Run(run func(ctx context.Context, id uuid.UUID, startDate time.Time, endDate time.Time)) *Mockrepository_GetCountHistoryForPeriod_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(uuid.UUID), args[2].(time.Time), args[3].(time.Time))
+	})
+	return _c
+}
+
+func (_c *Mockrepository_GetCountHistoryForPeriod_Call) Return(_a0 []entities.CountHistoryEvent, _a1 error) *Mockrepository_GetCountHistoryForPeriod_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *Mockrepository_GetCountHistoryForPeriod_Call) RunAndReturn(run func(context.Context, uuid.UUID, time.Time, time.Time) ([]entities.CountHistoryEvent, error)) *Mockrepository_GetCountHistoryForPeriod_Call {
 	_c.Call.Return(run)
 	return _c
 }

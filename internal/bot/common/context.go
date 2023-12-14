@@ -31,5 +31,5 @@ func GetContextFromContext(c telebot.Context) context.Context {
 		return ctx
 	}
 
-	return nil
+	return context.Background() //nolint:forbidigo  // fallback context
 }

@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/outcatcher/scriba/internal/entities"
@@ -9,6 +10,9 @@ import (
 
 type repository interface {
 	GetPlayerCount(ctx context.Context, id uuid.UUID) (int32, error)
+	GetCountHistoryForPeriod(
+		ctx context.Context, id uuid.UUID, startDate, endDate time.Time,
+	) ([]entities.CountHistoryEvent, error)
 	InsertPlayerCountChange(ctx context.Context, playerID uuid.UUID, delta int16) error
 	CreateUserFromTG(ctx context.Context, telegramID int64) (uuid.UUID, error)
 	FindUserByTelegramID(ctx context.Context, telegramID int64) (*entities.Player, error)
