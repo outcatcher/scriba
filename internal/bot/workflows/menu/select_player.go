@@ -18,7 +18,7 @@ func (u *userMenuState) playersList(chat *telebot.Chat, players []entities.Playe
 		for _, player := range players {
 			chat, err := u.api.ChatByID(player.TelegramID)
 			if err != nil {
-				slog.Error("failed to get chat membership", "chat_id", chat.ID, "user_id", player.TelegramID)
+				slog.Error("failed to get chat membership", "user_id", player.TelegramID)
 
 				continue
 			}

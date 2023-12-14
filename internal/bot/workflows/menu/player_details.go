@@ -31,7 +31,17 @@ func (u *userMenuState) userDetails(user telegramUserInfo) telebot.HandlerFunc {
 			scoreStr = "\\" + scoreStr // escape -
 		}
 
-		rows := u.scoreButtonsToRows(menu, changeUserScoreButtons)
+		rows := make([]telebot.Row, 0)
+
+		for period, text := range historyOptions {
+			histBtn := menu.Data(text, string(period))
+
+			u.handler.Handle(&histBtn, u.replyScoreHistory(period))
+
+			rows = append(rows, telebot.Row{histBtn})
+		}
+
+		rows = append(rows, u.scoreButtonsToRows(menu, changeUserScoreButtons)...)
 
 		zeroBtn := menu.Data("Обнулить очки", "0")
 		u.handler.Handle(&zeroBtn, u.changeScore(-score), u.forbidSelf)

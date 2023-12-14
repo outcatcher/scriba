@@ -44,7 +44,7 @@ func (s *workflowSuite) SetupTest() {
 	s.workflow.WithTelegramAPI(s.tgMock)
 }
 
-func (s *workflowSuite) TestStartWorkflow() { //nolint:funlen  // the simplest way used
+func (s *workflowSuite) TestStartWorkflow() {
 	t := s.T()
 
 	start := s.workflow.EntryPoint(s.handlerMock)

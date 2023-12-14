@@ -75,6 +75,62 @@ func (_c *MockUseCases_GetPlayerCountByTelegramID_Call) RunAndReturn(run func(co
 	return _c
 }
 
+// GetPlayerHistoryByTelegramID provides a mock function with given fields: ctx, telegramID, period
+func (_m *MockUseCases) GetPlayerHistoryByTelegramID(ctx context.Context, telegramID int64, period entities.HistoryPeriod) ([]entities.CountHistoryEvent, error) {
+	ret := _m.Called(ctx, telegramID, period)
+
+	var r0 []entities.CountHistoryEvent
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, int64, entities.HistoryPeriod) ([]entities.CountHistoryEvent, error)); ok {
+		return rf(ctx, telegramID, period)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, int64, entities.HistoryPeriod) []entities.CountHistoryEvent); ok {
+		r0 = rf(ctx, telegramID, period)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entities.CountHistoryEvent)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, int64, entities.HistoryPeriod) error); ok {
+		r1 = rf(ctx, telegramID, period)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockUseCases_GetPlayerHistoryByTelegramID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPlayerHistoryByTelegramID'
+type MockUseCases_GetPlayerHistoryByTelegramID_Call struct {
+	*mock.Call
+}
+
+// GetPlayerHistoryByTelegramID is a helper method to define mock.On call
+//   - ctx context.Context
+//   - telegramID int64
+//   - period entities.HistoryPeriod
+func (_e *MockUseCases_Expecter) GetPlayerHistoryByTelegramID(ctx interface{}, telegramID interface{}, period interface{}) *MockUseCases_GetPlayerHistoryByTelegramID_Call {
+	return &MockUseCases_GetPlayerHistoryByTelegramID_Call{Call: _e.mock.On("GetPlayerHistoryByTelegramID", ctx, telegramID, period)}
+}
+
+func (_c *MockUseCases_GetPlayerHistoryByTelegramID_Call) Run(run func(ctx context.Context, telegramID int64, period entities.HistoryPeriod)) *MockUseCases_GetPlayerHistoryByTelegramID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int64), args[2].(entities.HistoryPeriod))
+	})
+	return _c
+}
+
+func (_c *MockUseCases_GetPlayerHistoryByTelegramID_Call) Return(_a0 []entities.CountHistoryEvent, _a1 error) *MockUseCases_GetPlayerHistoryByTelegramID_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockUseCases_GetPlayerHistoryByTelegramID_Call) RunAndReturn(run func(context.Context, int64, entities.HistoryPeriod) ([]entities.CountHistoryEvent, error)) *MockUseCases_GetPlayerHistoryByTelegramID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ListPlayers provides a mock function with given fields: ctx
 func (_m *MockUseCases) ListPlayers(ctx context.Context) ([]entities.Player, error) {
 	ret := _m.Called(ctx)

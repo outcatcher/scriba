@@ -48,8 +48,12 @@ func TestCount(t *testing.T) {
 
 		expectedCount := rand.Int31()
 
-		mockRepo.On("FindUserByTelegramID", ctx, player.TelegramID).Return(player, nil).Once()
-		mockRepo.On("GetPlayerCount", ctx, player.ID).Return(expectedCount, nil).Once()
+		mockRepo.
+			On("FindUserByTelegramID", ctx, player.TelegramID).
+			Return(player, nil).Once()
+		mockRepo.
+			On("GetPlayerCount", ctx, player.ID).
+			Return(expectedCount, nil).Once()
 
 		count, err := cases.GetPlayerCountByTelegramID(ctx, player.TelegramID)
 		require.NoError(t, err)

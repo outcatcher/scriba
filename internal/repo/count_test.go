@@ -5,8 +5,10 @@ import (
 	"math"
 	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/outcatcher/scriba/internal/entities"
 	"github.com/outcatcher/scriba/internal/repo/mocks"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -24,7 +26,11 @@ func TestRepo_GetPlayerCount_emptyCache(t *testing.T) {
 	expectedCount := rand.Int31()
 
 	mockExecutor.
-		On("GetContext", ctx, mock.AnythingOfType("*int32"), mock.AnythingOfType("string"), playerUUID).
+		On("GetContext",
+			ctx,
+			mock.AnythingOfType("*int32"),
+			mock.AnythingOfType("string"),
+			playerUUID).
 		Run(func(args mock.Arguments) {
 			count, ok := args.Get(1).(*int32)
 			require.True(t, ok)
@@ -71,7 +77,11 @@ func TestRepo_GetPlayerCount_dbError(t *testing.T) {
 	playerUUID := uuid.New()
 
 	mockExecutor.
-		On("GetContext", ctx, mock.AnythingOfType("*int32"), mock.AnythingOfType("string"), playerUUID).
+		On("GetContext",
+			ctx,
+			mock.AnythingOfType("*int32"),
+			mock.AnythingOfType("string"),
+			playerUUID).
 		Return(errTest)
 
 	_, err := repo.GetPlayerCount(ctx, playerUUID)
@@ -122,4 +132,72 @@ func TestRepo_InsertPlayerCountChange_dbError(t *testing.T) {
 
 	_, ok := repo.countSumCache.Get(playerUUID) // cache should NOT be reset for the user
 	require.True(t, ok)
+}
+
+func TestGetCountHistoryForPeriod_ok(t *testing.T) {
+	t.Parallel()
+
+	mockExecutor := mocks.NewMockqueryExecutor(t)
+
+	repo := New(mockExecutor)
+	ctx := context.Background()
+
+	playerUUID := uuid.New()
+	endDate := time.Now()
+	startDate := endDate.Add(-24 * time.Hour)
+
+	expectedHistory := []entities.CountHistoryEvent{{
+		Timestamp: endDate.Add(-2 * time.Hour),
+		Delta:     12,
+	}}
+
+	mockedHistory := []countHistoryItem[entities.CountHistoryEvent]{{
+		Timestamp: endDate.Add(-2 * time.Hour),
+		Delta:     12,
+	}}
+
+	mockExecutor.On(
+		"SelectContext",
+		ctx,
+		mock.Anything,
+		mock.AnythingOfType("string"),
+		mock.AnythingOfType("uuid.UUID"),
+		startDate,
+		endDate,
+	).Run(func(args mock.Arguments) {
+		items, ok := args.Get(1).(*[]countHistoryItem[entities.CountHistoryEvent])
+		require.True(t, ok)
+
+		*items = mockedHistory
+	}).Return(nil)
+
+	history, err := repo.GetCountHistoryForPeriod(ctx, playerUUID, startDate, endDate)
+	require.NoError(t, err)
+	require.Equal(t, expectedHistory, history)
+}
+
+func TestGetCountHistoryForPeriod_dbError(t *testing.T) {
+	t.Parallel()
+
+	mockExecutor := mocks.NewMockqueryExecutor(t)
+
+	repo := New(mockExecutor)
+	ctx := context.Background()
+
+	playerUUID := uuid.New()
+	endDate := time.Now()
+	startDate := endDate.Add(-24 * time.Hour)
+
+	mockExecutor.On(
+		"SelectContext",
+		ctx,
+		mock.Anything,
+		mock.AnythingOfType("string"),
+		mock.AnythingOfType("uuid.UUID"),
+		startDate,
+		endDate,
+	).Return(errTest)
+
+	_, err := repo.GetCountHistoryForPeriod(ctx, playerUUID, startDate, endDate)
+	require.ErrorIs(t, err, errTest)
 }

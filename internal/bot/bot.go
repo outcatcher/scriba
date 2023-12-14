@@ -3,16 +3,14 @@ package bot
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"time"
 
 	"github.com/outcatcher/scriba/internal/bot/common"
-	"github.com/outcatcher/scriba/internal/bot/menu"
-	"github.com/outcatcher/scriba/internal/bot/register"
 	"github.com/outcatcher/scriba/internal/bot/schema"
+	"github.com/outcatcher/scriba/internal/bot/workflows/menu"
+	"github.com/outcatcher/scriba/internal/bot/workflows/register"
 	"github.com/outcatcher/scriba/internal/core/config"
 	"gopkg.in/telebot.v3"
-	"gopkg.in/telebot.v3/middleware"
 )
 
 const handlerTimeout = 10 * time.Second
@@ -36,9 +34,6 @@ func Start(ctx context.Context, botConfig config.BotConfig, app schema.UseCases)
 
 	bot.Use(
 		common.LogCommands(),
-		middleware.Recover(func(err error) {
-			slog.Error("got panic handling command", "error", err)
-		}),
 		common.WithTimeoutContext(ctx, handlerTimeout),
 	)
 

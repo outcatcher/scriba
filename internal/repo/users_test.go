@@ -82,10 +82,10 @@ func TestRepo_ListPlayers_emptyCache(t *testing.T) {
 	mockExecutor.
 		On("SelectContext", ctx, mock.Anything, mock.AnythingOfType("string")).
 		Run(func(args mock.Arguments) {
-			playerList, ok := args.Get(1).(*[]player)
+			playerList, ok := args.Get(1).(*[]player[entities.Player])
 			require.True(t, ok)
 
-			*playerList = append(*playerList, player{
+			*playerList = append(*playerList, player[entities.Player]{
 				ID:       expectedPlayers[0].ID,
 				TGUserID: expectedPlayers[0].TelegramID,
 			})
@@ -149,9 +149,12 @@ func TestRepo_FindUserByTelegramID_emptyCache(t *testing.T) {
 
 	mockExecutor.
 		On("GetContext",
-			ctx, mock.AnythingOfType("*repo.player"), mock.AnythingOfType("string"), expectedPlayer.TelegramID).
+			ctx,
+			mock.Anything,
+			mock.AnythingOfType("string"),
+			expectedPlayer.TelegramID).
 		Run(func(args mock.Arguments) {
-			pl, ok := args.Get(1).(*player)
+			pl, ok := args.Get(1).(*player[entities.Player])
 			require.True(t, ok)
 
 			pl.TGUserID = expectedPlayer.TelegramID
@@ -199,7 +202,10 @@ func TestRepo_FindUserByTelegramID_dbError(t *testing.T) {
 
 	mockExecutor.
 		On("GetContext",
-			ctx, mock.AnythingOfType("*repo.player"), mock.AnythingOfType("string"), randomID).
+			ctx,
+			mock.Anything,
+			mock.AnythingOfType("string"),
+			randomID).
 		Return(errTest).Once()
 
 	expectedPlayer := &entities.Player{

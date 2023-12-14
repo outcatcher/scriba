@@ -25,6 +25,7 @@ linters:
     - nosprintfhostport # not supporting ipv6 addresses in configuration
     - depguard
     - tparallel # duplicates paralleltest
+    - unused  # not very clever lint for generics
 
 linters-settings:
   tagliatelle:
@@ -33,6 +34,8 @@ linters-settings:
       rules:
         json: snake
         yaml: camel
+  funlen:
+    lines: 65
   revive:
     rules:
       - name: deep-exit
