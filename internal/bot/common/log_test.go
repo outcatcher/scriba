@@ -50,7 +50,7 @@ func TestLogCommandsErr(t *testing.T) { //nolint:paralleltest  // changing defau
 
 	slog.SetDefault(logger)
 
-	expectedArg := "expected-arg"
+	expectedArg := "expected-arg2"
 
 	mockCtx := mocks.NewMockContext(t)
 	mockCtx.On("Args").Return([]string{expectedArg})

@@ -14,6 +14,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const maxByte = 0xff
+
 func TestRepo_GetPlayerCount_emptyCache(t *testing.T) {
 	t.Parallel()
 
@@ -99,7 +101,7 @@ func TestRepo_InsertPlayerCountChange_ok(t *testing.T) {
 	playerUUID := uuid.New()
 	expectedDelta := int16(rand.Int31n(math.MaxInt16))
 
-	repo.countSumCache.Set(playerUUID, 0xff)
+	repo.countSumCache.Set(playerUUID, maxByte)
 
 	mockExecutor.On("ExecContext", ctx, mock.AnythingOfType("string"), expectedDelta, playerUUID).Return(nil, nil)
 
@@ -121,7 +123,7 @@ func TestRepo_InsertPlayerCountChange_dbError(t *testing.T) {
 	playerUUID := uuid.New()
 	expectedDelta := int16(rand.Int31n(math.MaxInt16))
 
-	repo.countSumCache.Set(playerUUID, 0xff)
+	repo.countSumCache.Set(playerUUID, maxByte)
 
 	mockExecutor.
 		On("ExecContext", ctx, mock.AnythingOfType("string"), expectedDelta, playerUUID).
@@ -146,14 +148,16 @@ func TestGetCountHistoryForPeriod_ok(t *testing.T) {
 	endDate := time.Now()
 	startDate := endDate.Add(-24 * time.Hour)
 
+	var expectedDelta int16 = 12
+
 	expectedHistory := []entities.CountHistoryEvent{{
 		Timestamp: endDate.Add(-2 * time.Hour),
-		Delta:     12,
+		Delta:     expectedDelta,
 	}}
 
 	mockedHistory := []countHistoryItem[entities.CountHistoryEvent]{{
 		Timestamp: endDate.Add(-2 * time.Hour),
-		Delta:     12,
+		Delta:     expectedDelta,
 	}}
 
 	mockExecutor.On(

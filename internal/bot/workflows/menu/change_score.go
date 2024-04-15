@@ -1,12 +1,15 @@
 package menu
 
 import (
+	"errors"
 	"fmt"
 	"math"
 
 	"github.com/outcatcher/scriba/internal/bot/common"
 	"gopkg.in/telebot.v3"
 )
+
+var errUpdatingCount = errors.New("error updating player's count")
 
 func (u *userMenuState) changeScore(delta int32) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
@@ -19,14 +22,14 @@ func (u *userMenuState) changeScore(delta int32) telebot.HandlerFunc {
 		// internal type is int16
 		for delta > math.MaxInt16 {
 			if err := u.app.UpdateCountByTelegramID(ctx, u.selectedUser.telegramID, math.MaxInt16); err != nil {
-				return fmt.Errorf("error updating player's count: %w", err)
+				return fmt.Errorf("%w: %w", errUpdatingCount, err)
 			}
 
 			delta -= math.MaxInt16
 		}
 
 		if err := u.app.UpdateCountByTelegramID(ctx, u.selectedUser.telegramID, int16(delta)); err != nil {
-			return fmt.Errorf("error updating player's count: %w", err)
+			return fmt.Errorf("%w: %w", errUpdatingCount, err)
 		}
 
 		return u.userDetails(*u.selectedUser)(c)

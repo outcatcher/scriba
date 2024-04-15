@@ -50,9 +50,9 @@ func (s *state) handleRegisterButton(c telebot.Context) error {
 	if err != nil {
 		slog.Error("failed to register user", "error", err)
 
-		_, err := s.api.Reply(c.Message(), "Не смогли зарегистрировать пользователя :\\(")
-		if err != nil {
-			return fmt.Errorf("failed to register user reply error: %w", err)
+		_, replyErr := s.api.Reply(c.Message(), "Не смогли зарегистрировать пользователя :\\(")
+		if replyErr != nil {
+			return fmt.Errorf("failed to register user reply error: %w", replyErr)
 		}
 
 		return nil

@@ -9,12 +9,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const maxPort = 0xffff
+
 func TestPgConnectionString(t *testing.T) {
 	t.Parallel()
 
 	dbConfig := config.PostgresConfig{
 		Host:     "postgre-test",
-		Port:     rand.Intn(0xffff),
+		Port:     rand.Intn(maxPort),
 		Database: "griuhlgn4l",
 		Username: "t43q0jvfpkml;d",
 		Password: "124431234dfs",

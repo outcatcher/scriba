@@ -16,15 +16,15 @@ func (u *userMenuState) playersList(chat *telebot.Chat, players []entities.Playe
 	switch chat.Type { //nolint:exhaustive
 	case telebot.ChatPrivate:
 		for _, player := range players {
-			chat, err := u.api.ChatByID(player.TelegramID)
+			playerChat, err := u.api.ChatByID(player.TelegramID)
 			if err != nil {
-				slog.Error("failed to get chat membership", "user_id", player.TelegramID)
+				slog.Error("failed to get chat membership", "chat_id", chat.ID, "user_id", player.TelegramID)
 
 				continue
 			}
 
 			result = append(result, telegramUserInfo{
-				name:       chat.FirstName,
+				name:       playerChat.FirstName,
 				telegramID: player.TelegramID,
 			})
 		}
@@ -87,9 +87,9 @@ func (u *userMenuState) selectPlayer(c telebot.Context) error {
 	menu.Inline(rows...)
 
 	if u.baseMenuMsg != nil {
-		msg, err := u.api.Edit(u.baseMenuMsg, msgText, menu)
-		if err != nil {
-			return fmt.Errorf("error editing menu: %w", err)
+		msg, editErr := u.api.Edit(u.baseMenuMsg, msgText, menu)
+		if editErr != nil {
+			return fmt.Errorf("error editing menu: %w", editErr)
 		}
 
 		u.baseMenuMsg = msg

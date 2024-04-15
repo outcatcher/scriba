@@ -4,9 +4,9 @@ dotenv:
   - .env
 
 vars:
-  binary_path: "{{ .USER_WORKING_DIR }}/build/bot"
-  migrate_path: "{{ .USER_WORKING_DIR }}/build/migrate"
-  migrations_path: "{{ .USER_WORKING_DIR }}/internal/migrations"
+  BINARY_PATH: "{{ .USER_WORKING_DIR }}/build/bot"
+  MIGRATE_PATH: "{{ .USER_WORKING_DIR }}/build/migrate"
+  MIGRATIONS_PATH: "{{ .USER_WORKING_DIR }}/internal/migrations"
 
 tasks:
   help:
@@ -32,11 +32,11 @@ tasks:
 
   build:
     desc: Build app executable
-    cmd: go build -trimpath -o "{{ .binary_path }}" ./cmd/bot/main.go
+    cmd: go build -trimpath -o "{{ .BINARY_PATH }}" ./cmd/bot/main.go
 
   build-migrate:
     desc: Build migration executable
-    cmd: go build -trimpath -o "{{ .migrate_path }}" ./cmd/migrate/main.go
+    cmd: go build -trimpath -o "{{ .MIGRATE_PATH }}" ./cmd/migrate/main.go
 
   run:
     desc: Run project with docker compose locally
@@ -52,25 +52,43 @@ tasks:
     dir: ./internal/deployment
     cmd: ansible-playbook --syntax-check deploy.yaml
 
-  deploy:
+  _deploy:
     desc: Deploy project to the environment
     dir: ./internal/deployment
+    internal: true
     requires:
       vars:
         - BOT_TOKEN
         - POSTGRES_PASSWORD
         - POSTGRES_PORT
         - VAULT_PASS
+        - ENV
     deps:
       - build
       - build-migrate
     preconditions:
       - echo ${VAULT_PASS} > .vault_pass.txt
     cmd: >
-      ansible-playbook
+      ansible-playbook {{ .ADDITIONALS }}
       --vault-pass-file .vault_pass.txt
-      --extra-vars local_binary_path="{{ .binary_path }}"
-      --extra-vars local_migrate_path="{{ .migrate_path }}"
-      --extra-vars local_migrations_path="{{ .migrations_path }}"
+      --extra-vars local_binary_path="{{ .BINARY_PATH }}"
+      --extra-vars local_migrate_path="{{ .MIGRATE_PATH }}"
+      --extra-vars local_migrations_path="{{ .MIGRATIONS_PATH }}"
+      -i "hosts/{{ .ENV }}.yaml"
       deploy.yaml
       -v
+
+  deploy-prod:
+    desc: Deploy project to the PROD
+    cmds:
+      - task: _deploy
+        vars:
+          ENV: prod
+
+  deploy-local:
+    desc: Deploy project locally
+    cmds:
+      - task: _deploy
+        vars:
+          ADDITIONALS: --ask-become-pass
+          ENV: local
