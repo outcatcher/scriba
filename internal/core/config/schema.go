@@ -5,10 +5,10 @@ import "time"
 // PostgresConfig - postgres connection configuration.
 type PostgresConfig struct {
 	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
 	Database string `yaml:"database"`
 	Username string `yaml:"username"`
 	Password string `env:"POSTGRES_PASSWORD" yaml:"-"`
+	Port     int    `yaml:"port"`
 }
 
 // PollConfig - configuration of long polling for telegram.
@@ -28,9 +28,9 @@ type StorageConfig struct {
 
 // BotConfig - configuration of telegram bot.
 type BotConfig struct {
-	Token    string          `env:"BOT_TOKEN"           yaml:"-"`
 	Messages *MessagesConfig `yaml:"messages,omitempty"`
 	Poll     *PollConfig     `yaml:"poll,omitempty"`
+	Token    string          `env:"BOT_TOKEN"           yaml:"-"`
 	Verbose  bool            `yaml:"verbose"`
 }
 

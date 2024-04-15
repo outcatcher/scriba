@@ -1,5 +1,5 @@
 target:
   hosts:
-    hetzner:
+    prod:
       ansible_host: hetzner
       ansible_user: ubuntu

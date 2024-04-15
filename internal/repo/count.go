@@ -10,8 +10,8 @@ import (
 )
 
 type countHistoryItem[T entities.CountHistoryEvent] struct {
-	Delta     int16     `db:"delta"`
 	Timestamp time.Time `db:"timestamp"`
+	Delta     int16     `db:"delta"`
 }
 
 func (c countHistoryItem[T]) toEntity() *T {

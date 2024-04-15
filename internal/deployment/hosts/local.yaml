@@ -1,0 +1,7 @@
+target:
+  hosts:
+    local: # local deployments are used for the debug
+      ansible_host: localhost
+      ansible_connection: local
+      bot_token: "{{ lookup('env', 'BOT_TOKEN_TEST') }}"
+      bot_debug: yes

@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -13,11 +14,13 @@ var periodDelta = map[entities.HistoryPeriod]time.Duration{
 	entities.HistoryPeriodWeek:  -7 * 24 * time.Hour,
 }
 
+var errFindPlayer = errors.New("error finding player")
+
 // UpdateCountByTelegramID find player by Telegram user ID and updates its count.
 func (u *UseCases) UpdateCountByTelegramID(ctx context.Context, telegramID int64, delta int16) error {
 	user, err := u.repo.FindUserByTelegramID(ctx, telegramID)
 	if err != nil {
-		return fmt.Errorf("error finding player: %w", err)
+		return fmt.Errorf("%w: %w", errFindPlayer, err)
 	}
 
 	err = u.repo.InsertPlayerCountChange(ctx, user.ID, delta)
@@ -32,7 +35,7 @@ func (u *UseCases) UpdateCountByTelegramID(ctx context.Context, telegramID int64
 func (u *UseCases) GetPlayerCountByTelegramID(ctx context.Context, telegramID int64) (int32, error) {
 	user, err := u.repo.FindUserByTelegramID(ctx, telegramID)
 	if err != nil {
-		return 0, fmt.Errorf("error finding player: %w", err)
+		return 0, fmt.Errorf("%w: %w", errFindPlayer, err)
 	}
 
 	count, err := u.repo.GetPlayerCount(ctx, user.ID)
@@ -49,7 +52,7 @@ func (u *UseCases) GetPlayerHistoryByTelegramID(
 ) ([]entities.CountHistoryEvent, error) {
 	user, err := u.repo.FindUserByTelegramID(ctx, telegramID)
 	if err != nil {
-		return nil, fmt.Errorf("error finding player: %w", err)
+		return nil, fmt.Errorf("%w: %w", errFindPlayer, err)
 	}
 
 	endTime := time.Now().UTC()

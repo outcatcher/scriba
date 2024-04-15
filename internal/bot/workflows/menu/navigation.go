@@ -26,7 +26,7 @@ func (u *userMenuState) back(c telebot.Context) error {
 	}
 }
 
-func (u *userMenuState) exit(c telebot.Context) error {
+func (u *userMenuState) exit(telebot.Context) error {
 	_ = u.api.Delete(u.baseMenuMsg)
 	_ = u.api.Delete(u.baseMsg)
 

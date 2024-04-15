@@ -11,6 +11,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const maxPort = 0xffff
+
 const configTemplate = `
 storage:
   postgres:
@@ -53,7 +55,7 @@ func TestLoadConfig_ok(t *testing.T) {
 		Storage: StorageConfig{
 			Postgres: PostgresConfig{
 				Host:     "http://test-host.com",
-				Port:     rand.Intn(0xffff),
+				Port:     rand.Intn(maxPort),
 				Database: "griuhlgn4l",
 				Username: "t43q0jvfpkml;d",
 				Password: "", // defined via env vars
