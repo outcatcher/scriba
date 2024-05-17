@@ -48,12 +48,12 @@ func Start(ctx context.Context, botConfig config.BotConfig, app schema.UseCases)
 	hdl.AddWorkflow("/start", new(register.Workflow))
 	hdl.AddWorkflow("/menu", new(menu.Workflow))
 
-	go bot.Start()
-
 	go func() {
 		<-ctx.Done()
 		bot.Stop()
 	}()
+
+	bot.Start()
 
 	return nil
 }

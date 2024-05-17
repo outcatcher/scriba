@@ -31,17 +31,17 @@ func main() {
 		log.Fatalln("error initializing app", err)
 	}
 
+	go func() {
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+
+		// waiting for signal
+		sig := <-sigChan
+		slog.Error("received signal:", "signal", sig)
+		cancel()
+	}()
+
 	if err := bot.Start(ctx, cfg.Bot, app); err != nil {
 		log.Fatalln("failed to start bot", err)
 	}
-
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
-
-	// waiting for signal
-	sig := <-sigChan
-	slog.Error("received signal:", "signal", sig)
-	cancel()
-
-	os.Exit(0)
 }
