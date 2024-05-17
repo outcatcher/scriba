@@ -3,13 +3,17 @@ package menu
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"math"
 
 	"github.com/outcatcher/scriba/internal/bot/common"
 	"gopkg.in/telebot.v3"
 )
 
-var errUpdatingCount = errors.New("error updating player's count")
+var (
+	errUpdatingCount      = errors.New("error updating player's count")
+	errLoggingCountChange = errors.New("error logging players count change")
+)
 
 func (u *userMenuState) changeScore(delta int32) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
@@ -32,8 +36,25 @@ func (u *userMenuState) changeScore(delta int32) telebot.HandlerFunc {
 			return fmt.Errorf("%w: %w", errUpdatingCount, err)
 		}
 
+		if err := u.logScoreChange(c, u.selectedUser.name, delta); err != nil {
+			slog.Error("log score change", "error", err)
+		}
+
 		return u.userDetails(*u.selectedUser)(c)
 	}
+}
+
+func (u *userMenuState) logScoreChange(c telebot.Context, username string, delta int32) error {
+	deltaStr := fmt.Sprintf("\\%+d", delta)
+
+	messageText := fmt.Sprintf("Количество баллов для %s изменено: %s", username, deltaStr)
+
+	_, err := u.api.Send(c.Recipient(), messageText)
+	if err != nil {
+		return fmt.Errorf("%w: %w", errLoggingCountChange, err)
+	}
+
+	return nil
 }
 
 func uniqueByNumber(src int32) string {
