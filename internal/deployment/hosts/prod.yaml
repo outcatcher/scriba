@@ -3,3 +3,4 @@ target:
     prod:
       ansible_host: hetzner
       ansible_user: ubuntu
+      bot_token: "{{ lookup('env', 'BOT_TOKEN') }}"
