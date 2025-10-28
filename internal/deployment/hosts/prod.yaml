@@ -1,6 +1,6 @@
 target:
   hosts:
     prod:
-      ansible_host: hetzner
-      ansible_user: ubuntu
+      ansible_host: uz
+      ansible_user: "{{ lookup('env', 'BOT_USERNAME') }}"
       bot_token: "{{ lookup('env', 'BOT_TOKEN') }}"

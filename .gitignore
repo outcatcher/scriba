@@ -6,3 +6,5 @@ build/
 
 coverage.out
 coverage.html
+
+config.yaml*
